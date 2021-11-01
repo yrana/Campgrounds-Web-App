@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const Campground = require('./models/campground')
-const methodOverride = require('method-override') // used for PUT requests
+const methodOverride = require('method-override') // used for PUT and DELETE requests
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
