@@ -60,7 +60,7 @@ passport.use(new LocalStrategy(User.authenticate())) //this is a static method t
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// all templates have access to this now
+// all templates have access to this
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');

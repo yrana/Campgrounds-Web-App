@@ -3,57 +3,27 @@ const router = express.Router();
 const User = require('../models/user');
 const catchAsync = require('../utils/catchAsync')
 const passport = require('passport');
+const users = require('../controllers/users');
 
 // register routes
 
 // register get route - render a register form
-router.get('/register', (req, res) => {
-    res.render('users/register');
-})
+router.get('/register', users.renderRegister);
 
 // register post route - registers the user
-router.post('/register', catchAsync(async (req, res) => {
-    try {
-        const { email, username, password } = req.body;
-        const newUser = new User({ email, username });
-        const registeredUser = await User.register(newUser, password);
-        req.login(registeredUser, err => {
-            if (err) {
-                return next(err);
-            }
-            req.flash('success', 'Welcome to YelpCamp');
-            res.redirect('/campgrounds');
-        })
-
-    }
-    catch (e) {
-        req.flash('error', e.message);
-        res.redirect('register');
-    }
-}))
+router.post('/register', catchAsync(users.registerUser));
 
 
 // login routes
-
 // login get route - renders a login form
-router.get('/login', catchAsync(async (req, res) => {
-    res.render('users/login');
-}))
+router.get('/login', catchAsync(users.renderLogin));
 
 // login post route
 // this uses passport middleware
-router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), (req, res) => {
-    req.flash('success', 'Welcome back!')
-    const redirectUrl = req.session.returnTo || '/campgrounds'; // this will allow users to redirect to the original page they were trying to reach to. returnTo is stored in middleware
-    delete req.session.returnTo;
-    res.redirect(redirectUrl);
-})
+router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), users.loginUser);
+
 
 //logout route
-router.get('/logout', (req, res) => {
-    req.logout();  //built it from passport
-    req.flash('success', 'Successfully logged out');
-    res.redirect('/campgrounds');
-})
+router.get('/logout', users.logout);
 
 module.exports = router;
