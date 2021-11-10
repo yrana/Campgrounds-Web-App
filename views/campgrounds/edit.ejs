@@ -6,7 +6,7 @@
         </h1>
         <div class="col-6 offset-3">
             <form action="/campgrounds/<%=campSelected.id %>?_method=PUT" method="POST" novalidate
-                class="validated-form">
+                class="validated-form" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label class="form-label" for="title">Title</label>
                     <input class="form-control" type="text" id="title" name="campground[title]" required
@@ -20,13 +20,21 @@
                 </div>
 
                 <div class=" mb-3">
-                    <label class="form-label" for="image">Image Url</label>
-                    <input class="form-control" type="text" id="image" name="campground[image]" required
-                        value="<%=campSelected.image %>">
+                    <label for="image" class="form-label">Add Images</label>
+                    <input class="form-control" type="file" id="image" name="image" multiple>
+                </div>
+                <div class="mb-3">
+                    <% campSelected.images.forEach(function(img,i) {%>
+                        <img src="<%= img.thumbnail %> " class="img-thumbnail" alt="">
+                        <div class="form-check-inline">
+                            <input type="checkbox" id="image-<%=i%>" name="deleteImages[]" value="<%= img.filename  %>">
+                        </div>
+                        <label for="image-<%=i%>">Delete?</label>
+                        <% })%>
                 </div>
 
                 <div class=" mb-3">
-                    <label class="form-label" for="image">Campground Price</label>
+                    <label class="form-label" for="price">Campground Price</label>
                     <div class="input-group">
                         <span class="input-group-text" id="price-label">$</span>
                         <input class="form-control" type="text" id="price" name="campground[price]" required
@@ -39,6 +47,7 @@
                     <textarea class="form-control" type="text" id="description" name="campground[description]"
                         required><%=campSelected.description %></textarea>
                 </div>
+
 
                 <div class="mb-3">
                     <button class="btn btn-info">Update campground</button>
