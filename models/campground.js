@@ -8,14 +8,29 @@ const ImageSchema = new Schema({
     filename: String
 });
 
-// virtual function because we are not storing this in the database
+// virtual function because we are not storing this in the database. thumbnail is a virtual property
 ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_200');
 })
+
+const opts = { toJSON: { virtuals: true } };
+
+
 const CampgroundSchema = new Schema({
     title: String,
     images: [ImageSchema],
     price: Number,
+    geometry: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
+    },
     description: String,
     location: String,
     author: {
@@ -28,7 +43,13 @@ const CampgroundSchema = new Schema({
             ref: 'Review'
         }
     ]
+}, opts);
+
+CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
+    // return `<a href="/campgrounds/${this._id}">${this.title}</a>`
+    return this.title;
 });
+
 
 // 'findOneAndDelete' comes from the mongoose docs. because we're using findByIdAndDelete() in the app.js for deleting campgrounds,
 // mongoose docs say that it will run findOneAndDelete middleware after that.
